@@ -1,11 +1,11 @@
-package main
+package Producer
 
 import (
-	"c4_kafka/Netplugs/Producer/kafka"
-	"c4_kafka/Netplugs/Producer/setting"
+	"github.com/WWTeamMGC/Netplugs/Producer/kafka"
+	"github.com/WWTeamMGC/Netplugs/Producer/setting"
 )
 
-func main() {
+func init() {
 	err := setting.Init()
 	if err != nil {
 		panic(err)

@@ -2,6 +2,8 @@ package Netplugs
 
 import (
 	"encoding/json"
+	"github.com/Shopify/sarama"
+	"github.com/WWTeamMGC/Netplugs/Producer/kafka"
 	"io/ioutil"
 
 	"github.com/WWTeamMGC/Netplugs/model"
@@ -10,22 +12,32 @@ import (
 
 func NetGinPlug() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var s []map[string]interface{}
-		body, _ := ioutil.ReadAll(c.Request.Body)
-		for k, v := range c.Request.Header {
-			s = append(s, map[string]interface{}{k: v})
-		}
-		b, err := json.Marshal(s)
-		if err != nil {
-			return
-		}
-		msg := &model.HttpInfo{
-			ClientIP: c.ClientIP(),
-			Method:   c.Request.Method,
-			UrlPath:  c.Request.URL.Path,
-			Header:   b,
-			Body:     body,
-		}
+		go func() {
+			var s []map[string]interface{}
+			body, _ := ioutil.ReadAll(c.Request.Body)
+			for k, v := range c.Request.Header {
+				s = append(s, map[string]interface{}{k: v})
+			}
+			headerjson, err := json.Marshal(s)
+			if err != nil {
+				return
+			}
+			httpmsg := model.HttpInfo{
+				ClientIP: c.ClientIP(),
+				Method:   c.Request.Method,
+				UrlPath:  c.Request.URL.Path,
+				Header:   headerjson,
+				Body:     body,
+			}
+			msgjson, err := json.Marshal(httpmsg)
+			if err != nil {
+				return
+			}
+			msg := &sarama.ProducerMessage{
+				Value: sarama.ByteEncoder(msgjson),
+			}
+			kafka.ToMsgChan(msg)
+		}()
 		//length := c.Request.ContentLength
 		c.Next()
 	}
