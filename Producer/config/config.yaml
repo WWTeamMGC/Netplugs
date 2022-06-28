@@ -1,0 +1,3 @@
+kafka :
+  address : wuhongyu.ltd:9092
+  chan_size : 100000
