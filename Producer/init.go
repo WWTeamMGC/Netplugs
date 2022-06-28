@@ -18,5 +18,5 @@ func init() {
 	//msg.Topic = "aaaaaaa"
 	//msg.Value = sarama.StringEncoder("ffffffffff")
 	//kafka.ToMsgChan(msg)  //test
-	select {}
+
 }
