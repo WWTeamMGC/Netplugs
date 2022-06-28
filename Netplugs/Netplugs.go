@@ -2,10 +2,10 @@ package Netplugs
 
 import (
 	"encoding/json"
-	"io/ioutil"
-
 	"github.com/Shopify/sarama"
 	"github.com/WWTeamMGC/Netplugs/Producer/kafka"
+	"io/ioutil"
+	"strings"
 
 	"github.com/WWTeamMGC/Netplugs/model"
 	"github.com/gin-gonic/gin"
@@ -35,7 +35,7 @@ func NetGinPlug() gin.HandlerFunc {
 				return
 			}
 			msg := &sarama.ProducerMessage{
-				Topic: c.Request.URL.Path,
+				Topic: strings.ReplaceAll(c.Request.URL.Path, "/", "____"),
 				Value: sarama.ByteEncoder(msgjson),
 			}
 			kafka.ToMsgChan(msg)
