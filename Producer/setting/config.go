@@ -16,7 +16,7 @@ type KafkaConfig struct {
 var conf = new(Config)
 
 func Init() (err error) {
-	viper.SetConfigFile("./config/config.yaml")
+	viper.SetConfigFile("./Producer/config/config.yaml")
 	err = viper.ReadInConfig()
 	if err != nil {
 		fmt.Println(err)
