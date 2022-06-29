@@ -2,11 +2,10 @@ package Netplugs
 
 import (
 	"encoding/json"
+	"io/ioutil"
+
 	"github.com/Shopify/sarama"
 	"github.com/WWTeamMGC/Netplugs/Producer/kafka"
-	"io/ioutil"
-	"strings"
-
 	"github.com/WWTeamMGC/Netplugs/model"
 	"github.com/gin-gonic/gin"
 )
@@ -19,15 +18,15 @@ func NetGinPlug() gin.HandlerFunc {
 			for k, v := range c.Request.Header {
 				s = append(s, map[string]interface{}{k: v})
 			}
-			headerjson, err := json.Marshal(s)
-			if err != nil {
-				return
-			}
+			// headerjson, err := json.Marshal(s)
+			// if err != nil {
+			// 	return
+			// }
 			httpmsg := model.HttpInfo{
 				ClientIP: c.ClientIP(),
 				Method:   c.Request.Method,
 				UrlPath:  c.Request.URL.Path,
-				Header:   headerjson,
+				Header:   s,
 				Body:     body,
 			}
 			msgjson, err := json.Marshal(httpmsg)
@@ -35,7 +34,7 @@ func NetGinPlug() gin.HandlerFunc {
 				return
 			}
 			msg := &sarama.ProducerMessage{
-				Topic: strings.ReplaceAll(c.Request.URL.Path, "/", "____"),
+				Topic: "test",
 				Value: sarama.ByteEncoder(msgjson),
 			}
 			kafka.ToMsgChan(msg)
