@@ -22,12 +22,17 @@ func NetGinPlug() gin.HandlerFunc {
 			// if err != nil {
 			// 	return
 			// }
+			news, err := json.Marshal(s)
+			//TODO fix err
+			if err != nil {
+				return
+			}
 			httpmsg := model.HttpInfo{
 				ClientIP: c.ClientIP(),
 				Method:   c.Request.Method,
 				UrlPath:  c.Request.URL.Path,
-				Header:   s,
-				Body:     body,
+				Header:   string(news),
+				Body:     string(body),
 			}
 			msgjson, err := json.Marshal(httpmsg)
 			if err != nil {
