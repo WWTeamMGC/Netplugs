@@ -5,7 +5,3 @@ type SetConfig struct {
 	SetWordsFilter  bool
 	SetImagesFilter bool
 }
-
-var (
-	Config SetConfig
-)

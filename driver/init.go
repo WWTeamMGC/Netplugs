@@ -28,12 +28,15 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	if Config.Config.SetIPFilter {
+}
+func InitServer(config *Config.SetConfig) {
+	if config.SetIPFilter {
 		go ReFlushIP()
 	}
-	if Config.Config.SetWordsFilter {
+	if config.SetIPFilter {
 		go ReFlushWords()
 	}
+	time.Sleep(5 * time.Second)
 }
 func FlushIPList() model.Badiplist {
 	url := "http://127.0.0.1:8080/BadApi/Ip"
@@ -56,7 +59,7 @@ func FlushWordsList() model.Badwordslist {
 	return BadWordsList
 }
 
-//定时30秒刷新IP和敏感词列表
+//定时30秒刷新IP
 
 func ReFlushIP() {
 	for {
