@@ -2,6 +2,8 @@ package Netplugs
 
 import (
 	"encoding/json"
+	"github.com/WWTeamMGC/Netplugs/Config"
+	"github.com/WWTeamMGC/Netplugs/driver"
 	"io/ioutil"
 
 	"github.com/Shopify/sarama"
@@ -13,15 +15,23 @@ import (
 func NetGinPlug() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		go func() {
+			if Config.Config.SetIPFilter {
+				s, _ := driver.BadIPServer.Match(c.ClientIP(), '*')
+				if len(s) != 0 {
+					c.Abort()
+				}
+			}
 			var s []map[string]interface{}
 			body, _ := ioutil.ReadAll(c.Request.Body)
+			if Config.Config.SetWordsFilter {
+				s, _ := driver.BadWordsServer.Match(string(body), '*')
+				if len(s) != 0 {
+					c.Abort()
+				}
+			}
 			for k, v := range c.Request.Header {
 				s = append(s, map[string]interface{}{k: v})
 			}
-			// headerjson, err := json.Marshal(s)
-			// if err != nil {
-			// 	return
-			// }
 			news, err := json.Marshal(s)
 			//TODO fix err
 			if err != nil {
@@ -44,7 +54,6 @@ func NetGinPlug() gin.HandlerFunc {
 			}
 			kafka.ToMsgChan(msg)
 		}()
-		//length := c.Request.ContentLength
 		c.Next()
 	}
 }
