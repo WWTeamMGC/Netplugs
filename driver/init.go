@@ -64,8 +64,12 @@ func FlushWordsList() model.Badwordslist {
 func ReFlushIP() {
 	for {
 		Badip = FlushIPList()
+		var Iplist []string
 		BadIPServer = match.NewMatchService()
-		BadIPServer.Build(Badip.Badiplist)
+		for _, v := range Badip.Badiplist {
+			Iplist = append(Iplist, v.Ip)
+		}
+		BadIPServer.Build(Iplist)
 		time.Sleep(30 * time.Second)
 	}
 }
